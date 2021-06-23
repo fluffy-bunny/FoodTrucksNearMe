@@ -39,8 +39,19 @@ namespace FoodTruckService
             var skip = int.Parse(tokenParts[0]);
             var take = int.Parse(tokenParts[1]);
 
-            var query = from c in dataSet
+            IEnumerable<MobileFoodFacilityPermit> query;
+            if (!string.IsNullOrEmpty(request.Filter.Status))
+            {
+                query = from c in dataSet
+                        where c.Status == request.Filter.Status
                         select c;
+            }
+            else
+            {
+                query = from c in dataSet      
+                        select c;
+            }
+           
             var pageSet = query.Skip(skip).Take(take);
             var total = query.Count();
             var results = pageSet.ToList();
@@ -50,7 +61,7 @@ namespace FoodTruckService
                 PaginationResponse = new PaginationResponse()
                 {
                     TotalAvailable = true,
-                    Total = (ulong)total,
+                    Total = (uint)total,
                     Limit = (uint)results.Count,
                     NextToken = $"{skip + take}:{take}"
 
