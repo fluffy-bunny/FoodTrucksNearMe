@@ -22,6 +22,6 @@ namespace Contracts
 
     public interface IFoodTruckService
     {
-        Task<IEnumerable<ListFoodTruckPermitsResponse>> ListFoodTruckPermitsAsync(Pagination pagination);
+        Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(Pagination pagination);
     }
 }

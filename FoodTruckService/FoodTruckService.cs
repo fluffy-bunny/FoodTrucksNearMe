@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using Contracts;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +21,7 @@ namespace FoodTruckService
             _dataSetCache = dataSetCache;
             _logger = logger;
         }
-        public async Task<IEnumerable<ListFoodTruckPermitsResponse>> ListFoodTruckPermitsAsync(Pagination pagination)
+        public async Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(Pagination pagination)
         {
             var dataSet = _dataSetCache.GetCurrentDataSet();
             if (dataSet == null)
@@ -29,6 +30,32 @@ namespace FoodTruckService
                 return null;
             }
 
+            if (pagination.NextToken == null)
+            {
+                pagination.NextToken = $"0:{pagination.Limit}";
+            }
+
+            var tokenParts = pagination.NextToken.Split(':');
+            var skip = int.Parse(tokenParts[0]);
+            var take = int.Parse(tokenParts[1]);
+
+            var query = from c in dataSet
+                select c;
+            var pageSet = query.Skip(skip).Take(take);
+            var total = query.Count();
+            var results = pageSet.ToList();
+            return new ListFoodTruckPermitsResponse()
+            {
+                MobileFoodFacilityPermits = results,
+                PaginationResponse = new PaginationResponse()
+                {
+                    TotalAvailable = true,
+                    Total = (ulong) total,
+                    Limit = (uint)results.Count,
+                    NextToken = $"{skip + take}:{take}"
+
+                }
+            };
 
         }
     }
