@@ -8,14 +8,15 @@ namespace Contracts
 {
     public class Pagination
     {
-        public UInt16 Limit;
-        public string NextToken;
+        public UInt16 Limit { get; set; }
+        public string NextToken { get; set; }
     }
     public class PaginationResponse
     {
-        public bool TotalAvailable;
-        public UInt64 Total;
-        public UInt32 Limit;
-        public string NextToken;
+        public bool TotalAvailable { get; set; }
+        public UInt64 Total { get; set; }
+        public UInt32 Limit { get; set; }
+        public string NextToken { get; set; }
     }
+
 }

@@ -19,9 +19,13 @@ namespace Contracts
         public Coordinate Origin { get; set; }
         public string Status { get; set; }
     }
-
+    public class ListFoodTruckPermitsRequest
+    {
+        public ListFoodTruckPermitsFilter Filter { get; set; }
+        public Pagination Pagination { get; set; }
+    }
     public interface IFoodTruckService
     {
-        Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(Pagination pagination);
+        Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(ListFoodTruckPermitsRequest request);
     }
 }

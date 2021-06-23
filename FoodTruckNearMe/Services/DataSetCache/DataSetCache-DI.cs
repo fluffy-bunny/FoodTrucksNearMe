@@ -11,7 +11,7 @@ namespace FoodTruckNearMe.Services.DataSetCache
     {
         public static IServiceCollection AddDataSetCache(this IServiceCollection services)
         {
-            services.AddScoped<IDataSetCache, DataSetCache>();
+            services.AddSingleton<IDataSetCache, DataSetCache>();
             return services;
         }
     }
