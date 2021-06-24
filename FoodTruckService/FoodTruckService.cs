@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Contracts;
+using Geolocation;
 using Microsoft.Extensions.Logging;
 
 namespace FoodTruckService
 {
+   
     public class FoodTruckService : IFoodTruckService
     {
         private IDataSetCache _dataSetCache;
@@ -23,6 +25,7 @@ namespace FoodTruckService
         }
         public async Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(ListFoodTruckPermitsRequest request)
         {
+            // TODO: We need a validation func here to make sure everything that is comming in is legit.
             var dataSet = _dataSetCache.GetCurrentDataSet();
             if (dataSet == null)
             {
@@ -39,24 +42,44 @@ namespace FoodTruckService
             var skip = int.Parse(tokenParts[0]);
             var take = int.Parse(tokenParts[1]);
 
-            IEnumerable<MobileFoodFacilityPermit> query;
+            IEnumerable<DistanceFromOrginRecord> query;
             if (!string.IsNullOrEmpty(request.Filter.Status))
             {
                 query = from c in dataSet
                         where c.Status == request.Filter.Status
-                        select c;
+                        let dfo = new DistanceFromOrginRecord
+                        {
+                            Permit = c,
+                            Distance = CalculateDistance(request.Filter.Origin, new Coordinate
+                            {
+                                Longitude = c.Longitude,
+                                Latitude = c.Latitude
+                            })
+                        }
+                        select dfo;
             }
             else
             {
-                query = from c in dataSet      
-                        select c;
+                query = from c in dataSet
+                        let dfo = new DistanceFromOrginRecord
+                        {
+                            Permit = c,
+                            Distance = CalculateDistance(request.Filter.Origin, new Coordinate
+                            {
+                                Longitude = c.Longitude,
+                                Latitude = c.Latitude
+                            })
+                        }
+                        select dfo;
             }
-           
-            var pageSet = query.Skip(skip).Take(take);
+
+
+            var pageSet = query.Skip(skip).Take(take).OrderBy(x => x.Distance);
             var total = query.Count();
             var results = pageSet.ToList();
             return new ListFoodTruckPermitsResponse()
             {
+                Origin = request.Filter.Origin,
                 MobileFoodFacilityPermits = results,
                 PaginationResponse = new PaginationResponse()
                 {
@@ -68,6 +91,12 @@ namespace FoodTruckService
                 }
             };
 
+        }
+
+        private double CalculateDistance(Coordinate origin, Coordinate destination)
+        {
+            double distance = GeoCalculator.GetDistance(origin, destination, 1);
+            return distance;
         }
     }
 }
