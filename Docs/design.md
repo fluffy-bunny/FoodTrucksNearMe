@@ -6,7 +6,7 @@ The current [parser](../FoodTruckNearMe/MobileFoodFacilityPermitLoader.cs) assum
 To facilitate developer happiness a drop of a [csv dump](../FoodTruckNearMe/Mobile_Food_Facility_Permit.csv) is served up locally and will facilitate integration testing during builds.  The download controller can be found [here](../FoodTruckNearMe/Controllers/TestFileDownload.cs)
 
 ## Downloader  
-In the current design, a background task is run that will download a newer version of food truck permits and cache it for a time (usually a day).  The current data set is around 131 records, so storing it in memory in the app works.  If it gets larger then storing that drop in a distrubuted cache like CosmosDB or Redis will have to be entertained.  At the moment the applicaton is downloaded the drop from itself.  
+In the current design, a background task is run that will download a newer version of food truck permits and cache it for a time (usually a day).  The current data set is around 131 records, so storing it in memory in the app works.  If it gets larger then storing that drop in a distrubuted cache like CosmosDB or Redis will have to be entertained.  At the moment the applicaton is downloading the drop from itself.  
 
 The background task keeps 2 drops in memory and exposes a helper method to fetch the newest drop.  I primarily do that to avoid a lock on every request.  
 
