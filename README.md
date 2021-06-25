@@ -1,4 +1,5 @@
 # FoodTrucksNearMe  
+[Design](./Docs/design.md)  
 
 ## QuickStart
 1. Run the FoodTruckNearMe app
