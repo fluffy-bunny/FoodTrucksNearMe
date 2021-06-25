@@ -17,6 +17,7 @@ namespace Contracts
         public uint Total { get; set; }
         public uint Limit { get; set; }
         public string NextToken { get; set; }
+        public bool Done { get; set; }
     }
 
 }

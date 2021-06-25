@@ -26,6 +26,8 @@ namespace FoodTruckService
         public async Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(ListFoodTruckPermitsRequest request)
         {
             // TODO: We need a validation func here to make sure everything that is comming in is legit.
+            // fail fast if nonsense is passed in.
+
             var dataSet = _dataSetCache.GetCurrentDataSet();
             if (dataSet == null)
             {
@@ -35,12 +37,12 @@ namespace FoodTruckService
 
             if (string.IsNullOrEmpty(request.Pagination.NextToken))
             {
-                request.Pagination.NextToken = $"0:{request.Pagination.Limit}";
+                request.Pagination.NextToken = "0";
             }
 
-            var tokenParts = request.Pagination.NextToken.Split(':');
-            var skip = int.Parse(tokenParts[0]);
-            var take = int.Parse(tokenParts[1]);
+            
+            var skip = int.Parse(request.Pagination.NextToken);
+            
 
             IEnumerable<DistanceFromOrginRecord> query;
             if (!string.IsNullOrEmpty(request.Filter.Status))
@@ -74,9 +76,15 @@ namespace FoodTruckService
             }
 
 
-            var pageSet = query.Skip(skip).Take(take).OrderBy(x => x.Distance);
+            var pageSet = query.Skip(skip).Take((int)request.Pagination.Limit).OrderBy(x => x.Distance);
             var total = query.Count();
             var results = pageSet.ToList();
+            var done = false;
+            if ((total - skip) <= request.Pagination.Limit)
+            {
+                done = true;
+            }
+
             return new ListFoodTruckPermitsResponse()
             {
                 Origin = request.Filter.Origin,
@@ -86,8 +94,8 @@ namespace FoodTruckService
                     TotalAvailable = true,
                     Total = (uint)total,
                     Limit = (uint)results.Count,
-                    NextToken = $"{skip + take}:{take}"
-
+                    NextToken = $"{skip + request.Pagination.Limit}",
+                    Done = done
                 }
             };
 
