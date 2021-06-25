@@ -18,7 +18,7 @@ public interface IFoodTruckService
     Task<ListFoodTruckPermitsResponse> ListFoodTruckPermitsAsync(ListFoodTruckPermitsRequest request);
 }
 ```
-From the apps perspective, it simply wants a services that implements this interface and it doesn't matter how that data is retrieved.  In the current design the data being retrieved is from an inmemory Array of FoodTruckPermits that I use LINQ as my query languange.   If we decide that its better for the data to live in a distrubted cache, a different implementation of the interface can be swapped in.  
+From the apps perspective, it simply wants a services that implements this interface and it doesn't matter how that data is retrieved.  In the current design the data being retrieved is from an inmemory Array of FoodTruckPermits that I use LINQ as my query language.   If we decide that its better for the data to live in a distrubted cache, a different implementation of the interface can be swapped in.  
 
 ## Testing  
 Simple unit testing of code that doesn't make calls to external services is easy enough to add.  I am more interested in intergration testing and that is where the asp.net core [TestServer](../FoodTruckNearMe_TestServer) comes in.  This allows tests to be http requests just like our customers will use, and thanks to dependency inject we can swap out anything we want.  Usually I would MOCK an implemenation of the ```IFoodTruckService``` service, but since I added a downloader controller that serves up a drop of real data, it makes things a lot easier on me.  
