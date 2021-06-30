@@ -43,7 +43,7 @@ namespace FoodTruckNearMe
                 // TODO: These options need to come in from configuration appsettings.{environment}.json
                 options.ScheduleSeconds = 60;  // 1 minute
 //                options.DownloadUrl = "https://data.sfgov.org/api/views/rqzj-sfat/rows.csv";
-                options.DownloadUrl = "http://host.docker.internal:5000/TestFileDownload/download/rows.csv";
+                options.DownloadUrl = "http://localhost:5000/TestFileDownload/download/rows.csv";
 
             });
             // this service will pull new data on a periodic period.
