@@ -2,7 +2,7 @@
 [Design](./Docs/design.md)  
 
 ## QuickStart
-1. Run the FoodTruckNearMe app
+1. Run the FoodTruckNearMe app (NOT the DOCKER VERSION)
 
 ![swagger](./Docs/Swagger.PNG)  
 
